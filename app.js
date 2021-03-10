@@ -31,56 +31,137 @@ const render = require("./lib/htmlRenderer");
 // information; write your code to ask different questions via inquirer depending on
 // employee type.
 
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
+// HINT: make sure to renderHTML out your classes first! Remember that your Manager, Engineer,
 // and Intern classes should all extend from a class named Employee; see the directions
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
 
 const teamMembers = [];
-function enterNewMember() {
-    inquirer.prompt([
-        {
-            type: "input",
-            message: "What is the managers name?: ",
-            name: "managerName",
 
-        },
-        {
-            type: "number",
-            message: "What is your ID number?: ",
-            name: "managerId",
+const ManagerData = [
+    {
+        type: "input",
+        message: "What is the team manager's name?: ",
+        name: "managerName",
 
-        },
-        {
-            type: "input",
-            message: "What is your email address?: ",
-            name: "managerEmail",
+    },
+    {
+        type: "number",
+        message: "What is your ID number?: ",
+        name: "managerId",
 
-        },
-        {
-            type: "input",
-            message: "What is your office number?: ",
-            name: "officeNumber",
-        }
-    ])
+    },
+    {
+        type: "input",
+        message: "What is your email address?: ",
+        name: "managerEmail",
+
+    },
+    {
+        type: "input",
+        message: "What is your office number?: ",
+        name: "officeNumber",
+    }]
+
+const addMember = {
+    type: 'list',
+    message: 'Wich type of team member would you like to add?: ',
+    choices: ["Intern", "Engineer", "I don't want to add any more team members."],
+    name: 'memberRole',
+};
+
+const EngineerData = [
+    {
+        type: "input",
+        message: "What is the Engineers name?: ",
+        name: "engineerName",
+    },
+    {
+        type: "number",
+        message: "What is your Engineer ID number?: ",
+        name: "engineerId",
+    },
+    {
+        type: "type",
+        message: "What is your Engineer's email address?: ",
+        name: "engineerEmail",
+    },
+    {
+        type: "type",
+        message: "What is your Engineer's GitHub username?: ",
+        name: "github",
+    },
+]
+
+const internData = [
+    {
+        type: "input",
+        message: "What is the Intern's name?: ",
+        name: "internName",
+    },
+    {
+        type: "number",
+        message: "What is your Intern's ID number?: ",
+        name: "internId",
+    },
+    {
+        type: "type",
+        message: "What is your Intern's email address?: ",
+        name: "internEmail",
+    },
+    {
+        type: "type",
+        message: "What is your Intern's school?: ",
+        name: "school",
+    },
+]
+
+function enterManagerData() {
+    inquirer.prompt(ManagerData)
         .then((data) => {
             //console.log(data);
-
-            const manager = new Manager(data.managerName, data.managerId, data.managerEmail, data.officeNumber);
-            console.log(manager);
+            let manager = new Manager(data.managerName, data.managerId, data.managerEmail, data.officeNumber);
+            //console.log(manager);
             teamMembers.push(manager);
-            // TODO: Create a function to write README file
-            // const filename = data.title.replace(' ', "").toLowerCase()
-            // fs.writeFile(`${filename}.md`, generateMarkdown(data), (err) =>
-            // err ? console.error(err) : console.log("Thanks! Your Professional Readme is generated"))
+
+            addTeamMember();
+        });
+}
+
+function addTeamMember() {
+    inquirer.prompt(addMember)
+        .then((data) => {
+            if (data.memberRole === "Engineer") {
+                inquirer.prompt(EngineerData)
+                    .then((data) => {
+                        let engineer = new Engineer(data.engineerName, data.engineerId, data.engineerEmail, data.github);
+                        teamMembers.push(engineer);
+                        addTeamMember();
+                    });
+            } else if (data.memberRole === "Intern") {
+                inquirer.prompt(internData)
+                    .then((data) => {
+                        let intern = new Intern(data.internName, data.internId, data.internEmail, data.school);
+                        teamMembers.push(intern);
+                        addTeamMember();
+                    })
+            } else {
+                renderHTML(teamMembers);
+            }
         })
-    build();
 }
-function build() {
-    if (!fs.existsSync(OUTPUT_DIR)) {
-        fs.mkdirSync(OUTPUT_DIR);
-    }
-    fs.writeFileSync(outputPath, render(teamMembers));
+
+
+
+
+async function renderHTML(file) {
+const htmlPage = render(file);
+expect(fs.writeFileSync).lastCalledWith(outputPath, htmlPage);
+
+//     if (!fs.existsSync(OUTPUT_DIR)) {
+//         fs.mkdirSync(OUTPUT_DIR);
+//     }
+//     fs.writeFileSync(outputPath, render(teamMembers));
 }
-enterNewMember();
+enterManagerData();
