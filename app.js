@@ -152,16 +152,12 @@ function addTeamMember() {
         })
 }
 
+function renderHTML(data) {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR);
+    }
+    fs.writeFile(outputPath, render(data), (err) =>
+        err ? console.error(err) : console.log("Thanks! Your Team is generated"))
 
-
-
-async function renderHTML(file) {
-const htmlPage = render(file);
-expect(fs.writeFileSync).lastCalledWith(outputPath, htmlPage);
-
-//     if (!fs.existsSync(OUTPUT_DIR)) {
-//         fs.mkdirSync(OUTPUT_DIR);
-//     }
-//     fs.writeFileSync(outputPath, render(teamMembers));
 }
 enterManagerData();
