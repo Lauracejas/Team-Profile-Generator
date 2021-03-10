@@ -36,3 +36,51 @@ const render = require("./lib/htmlRenderer");
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
+
+const teamMembers = [];
+function enterNewMember() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the managers name?: ",
+            name: "managerName",
+
+        },
+        {
+            type: "number",
+            message: "What is your ID number?: ",
+            name: "managerId",
+
+        },
+        {
+            type: "input",
+            message: "What is your email address?: ",
+            name: "managerEmail",
+
+        },
+        {
+            type: "input",
+            message: "What is your office number?: ",
+            name: "officeNumber",
+        }
+    ])
+        .then((data) => {
+            //console.log(data);
+
+            const manager = new Manager(data.managerName, data.managerId, data.managerEmail, data.officeNumber);
+            console.log(manager);
+            teamMembers.push(manager);
+            // TODO: Create a function to write README file
+            // const filename = data.title.replace(' ', "").toLowerCase()
+            // fs.writeFile(`${filename}.md`, generateMarkdown(data), (err) =>
+            // err ? console.error(err) : console.log("Thanks! Your Professional Readme is generated"))
+        })
+    build();
+}
+function build() {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR);
+    }
+    fs.writeFileSync(outputPath, render(teamMembers));
+}
+enterNewMember();
